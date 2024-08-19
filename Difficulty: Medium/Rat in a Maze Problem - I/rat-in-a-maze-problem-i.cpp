@@ -8,42 +8,57 @@ using namespace std;
 // } Driver Code Ends
 // User function template for C++
 
-class Solution{
-    public:
-    vector<string>ans;
-    void solve(int i,int j,vector<vector<int>> &m, int n,string s)
-    {
-        if(i<0 || i>=n || j<0 || j>=n || m[i][j]==0)
-           return;
-        if(i==n-1 && j==n-1)
-        {
-            ans.push_back(s);
-            s="";
+class Solution {
+    void helper(vector<vector<int>> &mat, int i, int j, string&temp, vector<string>&ans){
+        int n = mat.size();
+        if(mat[i][j]!=1) return;
+        if(i==n-1 && j==n-1) {
+            ans.push_back(temp);
             return;
         }
-        m[i][j]=0;
-        solve(i,j+1,m,n,s+"R");
-        solve(i,j-1,m,n,s+"L");
-        solve(i+1,j,m,n,s+"D");
-        solve(i-1,j,m,n,s+"U");
-        m[i][j]=1;
+        if(i>=n || j>=n) return;
+        
+        if(i!=0 && mat[i-1][j]==1){
+            mat[i][j]=2;
+            temp+="U";
+            helper(mat, i-1, j, temp, ans);
+            temp.pop_back();
+            mat[i][j]=1;
+        }
+        if(i!=n-1 && mat[i+1][j]==1){
+            mat[i][j]=2;
+            temp+="D";
+            helper(mat, i+1, j, temp, ans);
+            temp.pop_back();
+            mat[i][j]=1;
+        }
+        if(j!=0 && mat[i][j-1]==1){
+            mat[i][j]=2;
+            temp+="L";
+            helper(mat, i, j-1, temp, ans);
+            temp.pop_back();
+            mat[i][j]=1;
+        }
+        if(j!=n-1 && mat[i][j+1]==1){
+            mat[i][j]=2;
+            temp+="R";
+            helper(mat, i, j+1, temp, ans);
+            temp.pop_back();
+            mat[i][j]=1;
+        }
     }
     
-    vector<string> findPath(vector<vector<int>> &m)
-    {   
-        int n = m.size();
-        string s="";
-        if(m[0][0]==0)
-           return {};
-        if(m[n-1][n-1]==0)
-           return {};
-        solve(0,0,m,n,s);
+  public:
+    vector<string> findPath(vector<vector<int>> &mat) {
+        // Your code goes here
+        string temp = "";
+        vector<string> ans;
+        int i = 0, j=0;
+        helper(mat, i, j, temp, ans);
         return ans;
+    
     }
 };
-
-    
-
 
 
 //{ Driver Code Starts.
