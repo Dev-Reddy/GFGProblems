@@ -9,42 +9,28 @@ using namespace std;
 // User function template for C++
 
 class Solution {
+    int di[4] = {1,0,0,-1};
+    int dj[4] = {0,-1,1,0};
+    
     void helper(vector<vector<int>> &mat, int i, int j, string&temp, vector<string>&ans){
         int n = mat.size();
         if(mat[i][j]!=1) return;
+        
         if(i==n-1 && j==n-1) {
             ans.push_back(temp);
             return;
         }
-        if(i>=n || j>=n) return;
-        
-        if(i!=0 && mat[i-1][j]==1){
-            mat[i][j]=2;
-            temp+="U";
-            helper(mat, i-1, j, temp, ans);
-            temp.pop_back();
-            mat[i][j]=1;
-        }
-        if(i!=n-1 && mat[i+1][j]==1){
-            mat[i][j]=2;
-            temp+="D";
-            helper(mat, i+1, j, temp, ans);
-            temp.pop_back();
-            mat[i][j]=1;
-        }
-        if(j!=0 && mat[i][j-1]==1){
-            mat[i][j]=2;
-            temp+="L";
-            helper(mat, i, j-1, temp, ans);
-            temp.pop_back();
-            mat[i][j]=1;
-        }
-        if(j!=n-1 && mat[i][j+1]==1){
-            mat[i][j]=2;
-            temp+="R";
-            helper(mat, i, j+1, temp, ans);
-            temp.pop_back();
-            mat[i][j]=1;
+        string dir="DLRU";
+        for(int k = 0;k<4;k++){
+            int nexti = i+di[k];
+            int nextj = j+dj[k];
+            if(nexti>=0 && nextj>=0 && nexti<n && nextj<n && mat[nexti][nextj]==1){
+                mat[i][j]=2;
+                temp+=dir[k];
+                helper(mat, nexti, nextj, temp, ans);
+                mat[i][j]=1;
+                temp.pop_back();
+            }
         }
     }
     
