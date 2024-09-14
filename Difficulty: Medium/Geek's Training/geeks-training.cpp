@@ -5,38 +5,35 @@ using namespace std;
 
 // } Driver Code Ends
 class Solution {
-    public:
-    int f(int day  , int lasttask , vector<vector<int>>&arr , vector<vector<int>>&dp)
-  {
-      if(dp[day][lasttask]!=-1)
-      return dp[day][lasttask];
-      if(day==0)
-      {
-          int maxi=0;
-          for(int task=0;task<3;task++)
-          {
-              if(task!=lasttask)
-              {
-              maxi=max(arr[day][task], maxi);
-              }
-          }
-          return dp[day][lasttask]=maxi;
-      }
-      int maxi=0;
-      for(int task = 0 ; task < 3 ; task++)
-      {
-          if(task!=lasttask){
-          int points = arr[day][task]+ f(day-1, task , arr , dp);
-          maxi= max(points, maxi);
-      }
-      }
-      return dp[day][lasttask]=maxi ;
-     
-  }
+  public:
     int maximumPoints(vector<vector<int>>& arr, int n) {
         // Code here
-        vector<vector<int>>dp(n, vector<int>(4,-1));
-        return f(n-1,3 , arr , dp);
+        vector<int>prev(4,0);
+        
+        for(int i = 0;i<=3;i++){
+            for(int j = 0;j<3;j++){
+                if(i!=j){
+                    prev[i] = max(prev[i], arr[0][j]);
+                }
+            }
+        }
+        
+        
+        
+        for(int day = 1;day<n;day++){
+            vector<int>curr(4,0);
+            for(int last = 0;last<=3;last++){
+                for(int task = 0;task<3;task++){
+                    if(task!=last){
+                        int point = prev[task] + arr[day][task];
+                        curr[last] = max(curr[last], point);
+                    }
+                }   
+            }
+            prev = curr;
+        }
+        
+        return prev[3];
     }
 };
 
