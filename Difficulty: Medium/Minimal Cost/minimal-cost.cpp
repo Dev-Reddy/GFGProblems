@@ -6,7 +6,7 @@ using namespace std;
 // } Driver Code Ends
 class Solution {
   public:
-    int minimizeCost(vector<int>& arr, int& k) {
+    int minimizeCost(int k, vector<int>& arr) {
         // Code here
         int n = arr.size();
         
@@ -28,6 +28,7 @@ class Solution {
     }
 };
 
+
 //{ Driver Code Starts.
 
 int main() {
@@ -47,7 +48,7 @@ int main() {
             arr.push_back(number);
         }
         Solution obj;
-        int res = obj.minimizeCost(arr, k);
+        int res = obj.minimizeCost(k, arr);
         cout << res << endl;
         // string tl;
         // getline(cin, tl);
