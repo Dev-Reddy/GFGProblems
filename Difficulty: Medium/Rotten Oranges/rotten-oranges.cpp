@@ -1,108 +1,90 @@
 //{ Driver Code Starts
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
+
 // } Driver Code Ends
-class Solution 
-{
-    public:
-    //Function to find minimum time required to rot all oranges. 
+class Solution {
+  public:
+    // Function to find minimum time required to rot all oranges.
     int orangesRotting(vector<vector<int>>& grid) {
         // Code here
-        int n=grid.size();
-        int m=grid[0].size();
-        int time=-1;
-        
-        queue<pair<int,int>> que;
-        int noOfFreshOrg=0;
-        int noOfRottenOrg=0;
-        
-        for(int i=0; i<n; i++){
-            for(int j=0; j<m; j++){
+        int m = grid.size();
+        int n = grid[0].size();
+
+        queue<pair<pair<int,int>,int>>q;
+
+        int vis[m][n];
+
+        int cntFresh = 0;
+
+        for(int i = 0;i<m;i++){
+            for(int j = 0;j<n;j++){
                 if(grid[i][j]==2){
-                    que.push({i,j});
-                    grid[i][j]=-1;
-                    noOfRottenOrg++;
+                    vis[i][j]=2;
+                    q.push({{i,j},0});
+                } else {
+                    vis[i][j]=0;
                 }
-                else if(grid[i][j]==1) noOfFreshOrg++;
+
+                if(grid[i][j]==1){
+                    cntFresh++;
+                }
             }
         }
+
+        int time = 0;
+        int cnt = 0;
         
-        if(noOfFreshOrg==0) return 0;
-        else if(noOfRottenOrg==0 && noOfFreshOrg!=0) return -1;
-        else if(noOfRottenOrg!=0 && noOfFreshOrg==0) return 0;
-        
-        
-        int orgRottenLater=0;
-        while(!que.empty()){
-            
-            time++;
-            int size=que.size();
-            
-            for(int p=0; p<size; p++){
-                
-                int i=que.front().first;
-                int j=que.front().second;
-                
-                // up
-                if(i-1>=0 and grid[i-1][j] ==1){
-                    que.push({i-1,j});
-                    grid[i-1][j]=-1;
-                    orgRottenLater++;
-                    
+        int rdir[] = {-1,0,1,0};
+        int cdir[] = {0,1,0,-1};
+
+        while(!q.empty()){
+            int r = q.front().first.first;
+            int c = q.front().first.second;
+            int t = q.front().second;
+
+            time = max(t,time);
+
+            q.pop();
+
+            for(int i = 0;i<4;i++){
+                int row = r + rdir[i];
+                int col = c + cdir[i];
+                if(row>=0 && row<m && col>=0 && col<n && vis[row][col]==0 && grid[row][col]==1){
+                    vis[row][col]=2;
+                    q.push({{row,col},t+1});
+                    cnt++;
                 }
-                
-                // down
-                if(i+1<n and grid[i+1][j] ==1){
-                    
-                    que.push({i+1,j});
-                    grid[i+1][j]=-1;
-                    orgRottenLater++;
-                }
-                
-                // left
-                if(j-1>=0  and grid[i][j-1] ==1){
-                    
-                    que.push({i,j-1});
-                    grid[i][j-1]=-1;
-                    orgRottenLater++;
-                }
-                
-                // right
-                if(j+1<m  and grid[i][j+1] ==1){
-                    
-                    que.push({i,j+1});
-                    grid[i][j+1]=-1;
-                    orgRottenLater++;
-                }
-                
-                que.pop();
             }
         }
-        
-        if(noOfFreshOrg!=orgRottenLater) return -1;
-        
+
+        if(cnt!=cntFresh) return -1;
+
         return time;
     }
 };
 
 //{ Driver Code Starts.
-int main(){
-	int tc;
-	cin >> tc;
-	while(tc--){
-		int n, m;
-		cin >> n >> m;
-		vector<vector<int>>grid(n, vector<int>(m, -1));
-		for(int i = 0; i < n; i++){
-			for(int j = 0; j < m; j++){
-				cin >> grid[i][j];
-			}
-		}
-		Solution obj;
-		int ans = obj.orangesRotting(grid);
-		cout << ans << "\n";
-	}
-	return 0;
+int main() {
+    int tc;
+    cin >> tc;
+    while (tc--) {
+        int n, m;
+        cin >> n >> m;
+        vector<vector<int>> mat(n, vector<int>(m, -1));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                cin >> mat[i][j];
+            }
+        }
+        Solution obj;
+        int ans = obj.orangesRotting(mat);
+        cout << ans << "\n";
+
+        cout << "~"
+             << "\n";
+    }
+    return 0;
 }
 // } Driver Code Ends
