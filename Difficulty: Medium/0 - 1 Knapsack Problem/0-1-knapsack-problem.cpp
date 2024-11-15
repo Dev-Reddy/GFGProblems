@@ -4,33 +4,37 @@ using namespace std;
 
 
 // } Driver Code Ends
+
 class Solution {
   public:
   
-    int helper(int ind, int capacity, vector<int> &val, vector<int> &wt){
+    int helper(int ind, int capacity, vector<int> &val, vector<int> &wt, vector<vector<int>>&dp){
         if(ind==0){
             if(wt[0]<=capacity) return val[0];
             else return 0;
         }
         
-        int notTake = helper(ind-1, capacity, val, wt);
+        if(dp[ind][capacity]!=-1) return dp[ind][capacity];
+        
+        
+        int notTake = helper(ind-1, capacity, val, wt, dp);
         
         int take = INT_MIN;
         if(wt[ind]<=capacity){
-            take = val[ind] + helper(ind-1, capacity-wt[ind], val, wt);
+            take = val[ind] + helper(ind-1, capacity-wt[ind], val, wt, dp);
         }
         
-        return max(take, notTake);
+        return dp[ind][capacity] = max(take, notTake);
     }
     
     // Function to return max value that can be put in knapsack of capacity.
     int knapSack(int capacity, vector<int> &val, vector<int> &wt) {
         // code here
-        
-        return helper(val.size()-1, capacity, val, wt);
-        
+        vector<vector<int>>dp(val.size(), vector<int>(capacity+1,-1));
+        return helper(val.size()-1, capacity, val, wt, dp);
     }
 };
+
 
 //{ Driver Code Starts.
 
