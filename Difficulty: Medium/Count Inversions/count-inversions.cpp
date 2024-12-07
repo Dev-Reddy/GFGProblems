@@ -4,82 +4,68 @@ using namespace std;
 
 
 // } Driver Code Ends
-
 class Solution {
   public:
-    // arr[]: Input Array
-    // N : Size of the Array arr[]
     // Function to count inversions in the array.
-    long long int  merge(long long arr[], int low, int mid, int high) {
-     vector<long long> temp(high - low + 1); // pre-allocate memory
-        int left = low;      // starting index of left half of arr
-        int right = mid + 1;   // starting index of right half of arr
-
-        // storing elements in the temporary array in a sorted manner
-        long long int cnt = 0;
-        int k = 0; // index for temp array
-
-        while (left <= mid && right <= high) {
-            if (arr[left] <= arr[right]) {
-                temp[k++] = arr[left++];
-            } else {
-                cnt += (mid - left + 1);
-                temp[k++] = arr[right++];
-            }
-        }
-
-        // if elements on the left half are still left
-        while (left <= mid) {
-            temp[k++] = arr[left++];
-        }
-
-        // if elements on the right half are still left
-        while (right <= high) {
-            temp[k++] = arr[right++];
-        }
-
-        // transferring all elements from temporary to arr
-        for (int i = 0; i < temp.size(); i++) {
-            arr[low + i] = temp[i];
-        }
-        
-        return cnt;
-}
-
-long long int mergeSort(long long arr[], int low, int high) {
-    long long int  cnt = 0;
-    if (low >= high) return cnt;
-    int mid = (low + high) / 2 ;
-    cnt+= mergeSort(arr, low, mid);  // left half
-    cnt+= mergeSort(arr, mid + 1, high); // right half
-    cnt+= merge(arr, low, mid, high);  // merging sorted halves
-    return cnt;
-}
-    long long int inversionCount(long long arr[], int n) {
-        // Your Code Here
-        
-        return mergeSort(arr, 0 , n-1);
+    int count=0;
+     
+     void merge(vector<int>&arr, int l, int m, int r) {
+      
+      int j=m+1;
+      for(int i=l;i<=m;i++){
+          while(j<=r && arr[i]>arr[j]){
+              j++;
+          }
+          
+          count+=(j-(m+1));
+          
+      }
+      sort(arr.begin()+l,arr.begin()+r+1);
     }
-};
+    
+    void mergeSort(vector<int>&arr, int s,int  e){
+        if(s>=e){
+            return;
+        }
+        
+        int  mid=s+(e-s)/2;
+      
+        mergeSort(arr,s,mid);
+        mergeSort(arr,mid+1,e);
+        merge(arr,s,mid,e);
+        
+    }
+     int inversionCount(vector<int>&arr)
+    {
+        
+        int start=0;
+        int end=arr.size()-1;
+       mergeSort(arr,start,end); 
+       return count;
+    }
 
+
+};
 
 //{ Driver Code Starts.
 
 int main() {
 
-    long long T;
+    int T;
     cin >> T;
-
+    cin.ignore();
     while (T--) {
-        int N;
-        cin >> N;
-
-        long long A[N];
-        for (long long i = 0; i < N; i++) {
-            cin >> A[i];
-        }
+        int n;
+        vector<int> a;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int num;
+        while (ss >> num)
+            a.push_back(num);
         Solution obj;
-        cout << obj.inversionCount(A, N) << endl;
+        cout << obj.inversionCount(a) << endl;
+        cout << "~" << endl;
     }
 
     return 0;
