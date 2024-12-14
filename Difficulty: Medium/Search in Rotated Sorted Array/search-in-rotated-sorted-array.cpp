@@ -8,7 +8,7 @@ class Solution {
   public:
     int search(vector<int>& arr, int key) {
         // complete the function here
-        int n = arr.size();
+         int n = arr.size();
         int start = 0, end = n - 1;
         while (start <= end) {
             int mid = (start + end) / 2;
@@ -58,6 +58,7 @@ int main() {
         cin >> key;
         Solution ob;
         cout << ob.search(arr, key) << endl;
+        cout << "~" << endl;
     }
     return 0;
 }
