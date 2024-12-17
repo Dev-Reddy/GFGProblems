@@ -1,24 +1,20 @@
 //{ Driver Code Starts
-#include <stdio.h>
 #include <bits/stdc++.h>
 using namespace std;
 
 /* Function to print an array */
-void printArray(int arr[], int size)
-{
-    int i;
-    for (i=0; i < size; i++)
-        printf("%d ", arr[i]);
+void printArray(const vector<int>& arr) {
+    for (int num : arr)
+        printf("%d ", num);
     printf("\n");
 }
 
+
 // } Driver Code Ends
-class Solution
-{
-    public:
-    //Function to sort an array using quick sort algorithm.
-    void quickSort(int arr[], int low, int high)
-    {
+class Solution {
+  public:
+    // Function to sort an array using quick sort algorithm.
+    void quickSort(vector<int>& arr, int low, int high) {
         // code here
         if(low>=high) return;
         
@@ -26,18 +22,20 @@ class Solution
         quickSort(arr, low, j-1);
         quickSort(arr, j+1, high);
     }
-    
-    public:
-    int partition (int a[], int low, int high)
-    {
-       // Your code here
-       int p = a[low];
+
+  public:
+    // Function that takes last element as pivot, places the pivot element at
+    // its correct position in sorted array, and places all smaller elements
+    // to left of pivot and all greater elements to right of pivot.
+    int partition(vector<int>& a, int low, int high) {
+        // code here
+        int p = a[low];
        
        int i = low, j = high;
        
        while(i<j){
-           while(i<=high-1 && a[i]<=p) i++;
-           while(j>=low+1 && a[j]>p) j--;
+           while(i<high && a[i]<=p) i++;
+           while(j>low && a[j]>p) j--;
            if(i<j) swap(a[i],a[j]);
        }
        swap(a[low],a[j]);
@@ -45,20 +43,30 @@ class Solution
     }
 };
 
-
 //{ Driver Code Starts.
-int main()
-{
-    int arr[1000],n,T,i;
-    scanf("%d",&T);
-    while(T--){
-    scanf("%d",&n);
-    for(i=0;i<n;i++)
-      scanf("%d",&arr[i]);
-      Solution ob;
-    ob.quickSort(arr, 0, n-1);
-    printArray(arr, n);
+
+int main() {
+
+    int T;
+    scanf("%d", &T);
+    getchar(); // to consume newline after T
+
+    while (T--) {
+        vector<int> arr;
+        string input;
+        getline(cin, input);
+        stringstream ss(input);
+        int number;
+        while (ss >> number) {
+            arr.push_back(number);
+        }
+
+        Solution ob;
+        ob.quickSort(arr, 0, arr.size() - 1);
+        printArray(arr);
     }
+
     return 0;
 }
+
 // } Driver Code Ends
