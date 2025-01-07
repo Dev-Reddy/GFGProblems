@@ -4,24 +4,55 @@ using namespace std;
 
 
 // } Driver Code Ends
-
 class Solution {
   public:
+    // Function to count pairs with the given sum.
     int countPairs(vector<int> &arr, int target) {
-        // Complete the function
-        int n=arr.size();
-        
-        int cnt=0;
-        unordered_map<int, int>mpp;
-        
-        for(int i=0; i<n; i++){
-            if(mpp.find(target-arr[i])!=mpp.end()){
-                cnt+=mpp[target-arr[i]];
+        int res = 0;
+        int n = arr.size();
+        int left = 0, right = n - 1;
+
+        while (left < right) {
+
+            // If sum is greater
+            if (arr[left] + arr[right] < target)
+                left++;
+
+            // If sum is lesser
+            else if (arr[left] + arr[right] > target)
+                right--;
+
+            // If sum is equal
+            else {
+
+                int cnt1 = 0, cnt2 = 0;
+                int ele1 = arr[left], ele2 = arr[right];
+
+                // Count frequency of first element of the pair
+                while (left <= right and arr[left] == ele1) {
+                    left++;
+                    cnt1++;
+                }
+
+                // Count frequency of second element of the pair
+                while (left <= right and arr[right] == ele2) {
+                    right--;
+                    cnt2++;
+                }
+
+                // If both the elements are same, then count of
+                // pairs = the number of ways to choose 2
+                // elements among cnt1 elements
+                if (ele1 == ele2)
+                    res += (cnt1 * (cnt1 - 1)) / 2;
+
+                // If the elements are different, then count of
+                // pairs = product of the count of both elements
+                else
+                    res += (cnt1 * cnt2);
             }
-            mpp[arr[i]]++;
         }
-        
-        return cnt;
+        return res;
     }
 };
 
