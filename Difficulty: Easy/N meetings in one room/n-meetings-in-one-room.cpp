@@ -8,50 +8,69 @@ class Solution {
   public:
     // Function to find the maximum number of meetings that can
     // be performed in a meeting room.
-    int maxMeetings(int n, int start[], int end[]) {
+    int maxMeetings(vector<int>& start, vector<int>& end) {
         // Your code here
         
-        vector<pair<int,int>> m(n);
+        // we want to end our meetings as soon as possible so there is time for more
+        // so we will sort them according to their end time
         
-        for(int i = 0;i<n;i++){
-            m[i] = {end[i],start[i]};
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; 
+        //pq to store end and start
+        
+        for(int i = 0; i<start.size(); i++){
+            pq.push({end[i], start[i]});
         }
         
-        sort(m.begin(),m.end());
-        
         int ans = 0;
-        int last = -1;
         
-        for(auto i: m){
-            int s = i.second;
+        int lastEndTime = -1;
+        
+        while(!pq.empty()){
+            auto front = pq.top();
+            pq.pop();
+            int e = front.first;
+            int s = front.second;
             
-            if(s>last){
+            if(s > lastEndTime){
                 ans++;
-                last = i.first;
+                lastEndTime = e;
             }
         }
         
         return ans;
+        
     }
 };
 
 //{ Driver Code Starts.
+
 int main() {
+
     int t;
     cin >> t;
+    cin.ignore();
     while (t--) {
-        int n;
-        cin >> n;
-        int start[n], end[n];
-        for (int i = 0; i < n; i++)
-            cin >> start[i];
+        string input;
+        int num;
+        vector<int> start;
 
-        for (int i = 0; i < n; i++)
-            cin >> end[i];
+        getline(cin, input);
+        stringstream s2(input);
+        while (s2 >> num) {
+            start.push_back(num);
+        }
+
+        vector<int> end;
+        getline(cin, input);
+        stringstream s22(input);
+        while (s22 >> num) {
+            end.push_back(num);
+        }
 
         Solution ob;
-        int ans = ob.maxMeetings(n, start, end);
+        int ans = ob.maxMeetings(start, end);
         cout << ans << endl;
+        cout << "~" << endl;
     }
     return 0;
 }
