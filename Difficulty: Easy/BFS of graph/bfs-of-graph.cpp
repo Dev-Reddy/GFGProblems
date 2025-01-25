@@ -2,58 +2,66 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // } Driver Code Ends
 class Solution {
   public:
     // Function to return Breadth First Traversal of given graph.
-    vector<int> bfsOfGraph(int V, vector<int> adj[]) {
+    vector<int> bfsOfGraph(vector<vector<int>> &adj) {
         // Code here
-        vector<int>vis(V,0);
+        
+        int n = adj.size();
+        
+        vector<int>vis(n, 0);
+        
         queue<int>q;
+        
         q.push(0);
+        
         vis[0]=1;
         
-        vector<int>bfs;
+        vector<int> ans;
         
         while(!q.empty()){
-            int node = q.front();
+            int front = q.front();
             q.pop();
-            bfs.push_back(node);
+            ans.push_back(front);
             
-            for(auto it: adj[node]){
-                if(!vis[it]){
-                    q.push(it);
-                    vis[it]=1;
+            for(auto i: adj[front]){
+                if(vis[i]!=1){
+                    vis[i]=1;
+                    q.push(i);
                 }
             }
         }
         
-        return bfs;
+        return ans;
+        
+        
     }
 };
 
 //{ Driver Code Starts.
+
 int main() {
     int tc;
     cin >> tc;
     while (tc--) {
         int V, E;
-        cin >> V >>
+        cin >> V >> E;
 
-            E;
-
-        vector<int> adj[V];
+        // Now using vector of vectors instead of array of vectors
+        vector<vector<int>> adj(V);
 
         for (int i = 0; i < E; i++) {
             int u, v;
             cin >> u >> v;
             adj[u].push_back(v);
-            // 		adj[v].push_back(u);
+            adj[v].push_back(u); // For undirected graph, add both u->v and v->u
         }
-        // string s1;
-        // cin>>s1;
+
         Solution obj;
-        vector<int> ans = obj.bfsOfGraph(V, adj);
+        vector<int> ans = obj.bfsOfGraph(adj);
         for (int i = 0; i < ans.size(); i++) {
             cout << ans[i] << " ";
         }
@@ -61,4 +69,5 @@ int main() {
     }
     return 0;
 }
+
 // } Driver Code Ends
