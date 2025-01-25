@@ -1,98 +1,91 @@
 //{ Driver Code Starts
-// Program to find the maximum profit job sequence from a given array 
-// of jobs with deadlines and profits 
-#include<bits/stdc++.h>
-using namespace std; 
-
-// A structure to represent a job 
-struct Job 
-{ 
-    int id;	 // Job Id 
-    int dead; // Deadline of job 
-    int profit; // Profit if job is over before or on deadline 
-}; 
+// Program to find the maximum profit job sequence from a given array
+// of jobs with deadlines and profits
+#include <bits/stdc++.h>
+using namespace std;
 
 
 // } Driver Code Ends
-/*
-struct Job 
-{ 
-    int id;	 // Job Id 
-    int dead; // Deadline of job 
-    int profit; // Profit if job is over before or on deadline 
-};
-*/
 
-class Solution 
-{
-   public:
-   
-   static bool comp(Job& j1, Job& j2){
-       return j1.dead < j2.dead;
-   }
-   
-   //Function to find the maximum profit and the number of jobs done.
-   vector<int> JobScheduling(Job arr[], int n) 
-   { 
-       sort(arr, arr + n, comp);
-   
-       vector<int> res(2,0);
-       priority_queue<int, vector<int>, greater<int>> pq;
-       pq.push(arr[0].profit);
-       
-       for(int i = 1; i< n; i++){
-           if(arr[i].dead > pq.size())
-               pq.push(arr[i].profit);
-           else{
-               if(pq.top() < arr[i].profit){
-                   pq.pop();
-                   pq.push(arr[i].profit);
-               }
-           }
-       }
-       
-       res[0] = pq.size();
-       while(!pq.empty()){
-           res[1] += pq.top();
-           pq.pop();
-       }
-       
-       return res;
-       
-   } 
+class Solution {
+  public:
+    vector<int> JobSequencing(vector<int> &id, vector<int> &deadline,
+                              vector<int> &profit) {
+        // code here
+        priority_queue<pair<int, pair<int, int>>> pq;
+        
+        int maxDeadline = 0;
+        
+        for(int i = 0; i < id.size(); i++){
+            maxDeadline = max(maxDeadline, deadline[i]);
+            pq.push({profit[i], {deadline[i], id[i]}});
+        }
+        
+        vector<int> days(maxDeadline+1, -1);
+        
+        int maxProfit = 0, totalJobs = 0;
+        
+        while(!pq.empty()){
+            pair<int, pair<int, int>> front = pq.top();
+            pq.pop();
+            
+            int p = front.first; //profit of job
+            int d = front.second.first; //deadline of job
+            int i = front.second.second; //id of job
+            
+            
+            for(int j = d; j>0; j--){
+                if(days[j]==-1){
+                    days[j] = i;
+                    maxProfit+=p;
+                    totalJobs++;
+                    break;
+                }
+            }
+            
+        }
+        
+        return {totalJobs, maxProfit};
+    }
 };
+
 
 //{ Driver Code Starts.
-// Driver program to test methods 
-int main() 
-{ 
+//            Driver program to test methods
+int main() {
     int t;
-    //testcases
+    // testcases
     cin >> t;
-    
-    while(t--){
-        int n;
-        
-        //size of array
-        cin >> n;
-        Job arr[n];
-        
-        //adding id, deadline, profit
-        for(int i = 0;i<n;i++){
-                int x, y, z;
-                cin >> x >> y >> z;
-                arr[i].id = x;
-                arr[i].dead = y;
-                arr[i].profit = z;
-        }
-        Solution ob;
-        //function call
-        vector<int> ans = ob.JobScheduling(arr, n);
-        cout<<ans[0]<<" "<<ans[1]<<endl;
+    cin.ignore();
+    while (t--) {
+        vector<int> jobIDs, deadlines, profits;
+        string temp;
+        getline(cin, temp);
+        istringstream ss1(temp);
+        int x;
+        while (ss1 >> x)
+            jobIDs.push_back(x);
+
+        getline(cin, temp);
+        istringstream ss2(temp);
+        while (ss2 >> x)
+            deadlines.push_back(x);
+
+        getline(cin, temp);
+        istringstream ss3(temp);
+        while (ss3 >> x)
+            profits.push_back(x);
+
+        int n = jobIDs.size();
+
+        Solution obj;
+        vector<int> ans = obj.JobSequencing(jobIDs, deadlines, profits);
+        cout << ans[0] << " " << ans[1] << endl;
+
+        cout << "~"
+             << "\n";
     }
-	return 0; 
+    return 0;
 }
-
-
 
 // } Driver Code Ends
