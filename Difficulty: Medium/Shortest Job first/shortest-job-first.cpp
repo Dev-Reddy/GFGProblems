@@ -15,17 +15,18 @@ class Solution {
     long long solve(vector<int>& bt) {
         // code here
         
-        long long wts = 0;
-        long long ans = 0;
+        long long waitTime = 0;
+        
+        long long currTime = 0;
         
         sort(bt.begin(), bt.end());
         
-        for(int i =0;i<bt.size();i++){
-            ans+=wts;
-            wts+=bt[i];
+        for(int i = 0;i<bt.size();i++){
+            waitTime+=currTime;
+            currTime += bt[i];
         }
         
-        return ans/bt.size();
+        return waitTime/bt.size();
     }
 };
 
