@@ -5,35 +5,50 @@ using namespace std;
 
 // } Driver Code Ends
 class Solution {
-  public:
-    int maximumPoints(vector<vector<int>>& arr, int n) {
-        // Code here
-        vector<int>prev(4,0);
+    
+    int helper(vector<vector<int>>& arr, int index, int lastChoice){
+        if(index < 0) return 0;
         
-        for(int i = 0;i<=3;i++){
-            for(int j = 0;j<3;j++){
-                if(i!=j){
-                    prev[i] = max(prev[i], arr[0][j]);
+        int ans = 0;
+        
+        for(int i = 0; i <=2; i++){
+            if(i!=lastChoice){
+                ans = max(ans, arr[index][i] + helper(arr, index-1, i));
+            }
+        }
+        
+        return ans;
+    }
+    
+    
+  public:
+    int maximumPoints(vector<vector<int>>& arr) {
+        // Code here
+        
+        // choice : R - 0, F - 1, L - 2, CHOOSING FIRST TIME 3
+        
+        int n = arr.size();
+        
+        
+        vector<int>last(4, 0);
+        
+        for(int i = 0; i < n; i++){
+            vector<int>curr(4, 0);
+            
+            for(int j = 0; j<4; j++){ //traverse last to insert values
+                for(int k = 0; k<3; k++){ //traverse day values
+                    if(j!=k){
+                        curr[j] = max(curr[j], last[k] + arr[i][k]);
+                    }
                 }
             }
+            
+            last = curr;
         }
         
+        // return helper(arr, n-1, -1);
         
-        
-        for(int day = 1;day<n;day++){
-            vector<int>curr(4,0);
-            for(int last = 0;last<=3;last++){
-                for(int task = 0;task<3;task++){
-                    if(task!=last){
-                        int point = prev[task] + arr[day][task];
-                        curr[last] = max(curr[last], point);
-                    }
-                }   
-            }
-            prev = curr;
-        }
-        
-        return prev[3];
+        return last[3];
     }
 };
 
@@ -56,7 +71,8 @@ int main() {
         }
 
         Solution obj;
-        cout << obj.maximumPoints(arr, n) << endl;
+        cout << obj.maximumPoints(arr) << endl;
+        cout << "~" << endl;
     }
     return 0;
 }
