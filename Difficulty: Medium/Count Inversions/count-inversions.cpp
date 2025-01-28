@@ -7,44 +7,64 @@ using namespace std;
 class Solution {
   public:
     // Function to count inversions in the array.
-    int count=0;
-     
-     void merge(vector<int>&arr, int l, int m, int r) {
-      
-      int j=m+1;
-      for(int i=l;i<=m;i++){
-          while(j<=r && arr[i]>arr[j]){
-              j++;
-          }
-          
-          count+=(j-(m+1));
-          
-      }
-      sort(arr.begin()+l,arr.begin()+r+1);
-    }
     
-    void mergeSort(vector<int>&arr, int s,int  e){
-        if(s>=e){
-            return;
+    int ans = 0;
+    
+    void merge(vector<int>& arr, int l, int mid, int r){
+        
+        int i = l, j = mid+1;
+        
+        vector<int> temp;
+        
+        while(i<=mid && j<=r){
+            if(arr[i]<=arr[j]){
+                temp.push_back(arr[i]);
+                i++;
+            } else {
+                ans+=mid+1-i;
+                temp.push_back(arr[j]);
+                j++;
+            }
         }
         
-        int  mid=s+(e-s)/2;
-      
-        mergeSort(arr,s,mid);
-        mergeSort(arr,mid+1,e);
-        merge(arr,s,mid,e);
+        while(i<=mid){
+            temp.push_back(arr[i]);
+            i++;
+        }
         
-    }
-     int inversionCount(vector<int>&arr)
-    {
+        while(j<=r){
+            temp.push_back(arr[j]);
+            j++;
+        }
         
-        int start=0;
-        int end=arr.size()-1;
-       mergeSort(arr,start,end); 
-       return count;
+        int k = 0;
+        
+        for(i = l; i<=r; i++){
+            arr[i] = temp[k];
+            k++;
+        }
+  }
+  
+  
+  public:
+    void mergeSort(vector<int>& arr, int l, int r) {
+        // code here
+        
+        if(l>=r) return;
+        
+        int mid = (l+r)/2;
+        mergeSort(arr, l, mid);
+        mergeSort(arr, mid+1, r);
+        merge(arr, l, mid, r);
     }
-
-
+    
+    
+    int inversionCount(vector<int> &arr) {
+        // Your Code Here
+        mergeSort(arr, 0, arr.size()-1);
+        
+        return ans;
+    }
 };
 
 //{ Driver Code Starts.
