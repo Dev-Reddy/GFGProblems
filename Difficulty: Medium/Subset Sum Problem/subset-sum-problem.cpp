@@ -8,49 +8,40 @@ using namespace std;
 // User function template for C++
 
 class Solution {
-  
-  bool helper(vector<int>arr, int target, vector<vector<int>>dp, int ind){
-      if(target==0) return true;
-      
-      if(ind==0) return target==arr[0];
-      
-      if(dp[ind][target]!=-1) return dp[ind][target];
-      
-      int notTake = helper(arr, target, dp, ind-1);
-      
-      int take = false;
-      
-      if(arr[ind]<=target) take = helper(arr, target-arr[ind], dp, ind-1);
-      
-      return dp[ind][target] = take | notTake;
-  }
-  
+    
+    bool helper(vector<int>& arr, int target, int ind, 
+    vector<vector<int>> &memo){
+        
+        if(target==0) return true;
+        
+        if(ind==0) return target==arr[0];
+        
+        if(memo[ind][target]!=-1) return memo[ind][target];
+        
+        // take 
+        
+        bool take = false;
+        
+        if(arr[ind]<=target){
+            take = helper(arr, target-arr[ind], ind-1, memo);
+        }
+        
+        // not take
+        bool notTake = helper(arr, target, ind-1, memo);
+        
+        memo[ind][target] =  take || notTake;
+        
+        return memo[ind][target];
+    }
+    
+    
   public:
-    bool isSubsetSum(vector<int>& arr, int sum) {
+    bool isSubsetSum(vector<int>& arr, int target) {
         // code here
-        int n = arr.size();
-        vector<vector<bool>>dp(n, vector<bool>(sum+1, false));
         
-        for(int i = 0;i<n;i++){
-            dp[i][0] = true;
-        }
+        vector<vector<int>> memo(arr.size(), vector<int>(target+1, -1));
         
-        dp[0][arr[0]] = true;
-        
-        for(int ind = 1;ind<n;ind++){
-            for(int target=1;target<=sum;target++){
-                
-                int notTake = dp[ind-1][target];
-      
-                int take = false;
-                  
-                if(arr[ind]<=target) take = dp[ind-1][target-arr[ind]];
-                
-                dp[ind][target] = take | notTake;
-            }
-        }
-        
-        return dp[n-1][sum];
+        return helper(arr, target, arr.size()-1, memo);
     }
 };
 
