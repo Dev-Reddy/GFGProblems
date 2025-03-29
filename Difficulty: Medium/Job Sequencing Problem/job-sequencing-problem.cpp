@@ -1,6 +1,5 @@
 //{ Driver Code Starts
-// Program to find the maximum profit job sequence from a given array
-// of jobs with deadlines and profits
+// Driver code
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -8,83 +7,67 @@ using namespace std;
 // } Driver Code Ends
 
 class Solution {
+    
+    bool static comp(pair<int, int>&a, pair<int, int>&b){
+        return a.first>b.first;
+    }
+    
   public:
-    vector<int> JobSequencing(vector<int> &id, vector<int> &deadline,
-                              vector<int> &profit) {
+    vector<int> jobSequencing(vector<int> &deadline, vector<int> &profit) {
         // code here
-        priority_queue<pair<int, pair<int, int>>> pq;
+         int n=profit.size();
+        vector<pair<int, int>>v;
         
-        int maxDeadline = 0;
-        
-        for(int i = 0; i < id.size(); i++){
-            maxDeadline = max(maxDeadline, deadline[i]);
-            pq.push({profit[i], {deadline[i], id[i]}});
+        for(int i=0; i<n; i++){
+            v.push_back({profit[i], deadline[i]});
         }
         
-        vector<int> days(maxDeadline+1, -1);
+        sort(v.begin(), v.end(), comp);
         
-        int maxProfit = 0, totalJobs = 0;
+        vector<int>tmp(n+1, -1);
         
-        while(!pq.empty()){
-            pair<int, pair<int, int>> front = pq.top();
-            pq.pop();
-            
-            int p = front.first; //profit of job
-            int d = front.second.first; //deadline of job
-            int i = front.second.second; //id of job
-            
-            
-            for(int j = d; j>0; j--){
-                if(days[j]==-1){
-                    days[j] = i;
-                    maxProfit+=p;
-                    totalJobs++;
-                    break;
-                }
+        int ans=0, cnt=0;
+        
+        for(int i=0; i<n; i++){
+            int ind=v[i].second;
+            while(ind>=1 && tmp[ind]>=0){
+                ind--;
             }
-            
+            if(ind>=1 && tmp[ind]<0){
+                cnt++;
+                ans+=v[i].first;
+                tmp[ind]=v[i].second;
+            }
         }
-        
-        return {totalJobs, maxProfit};
+        return {cnt, ans};
     }
 };
 
 
-
 //{ Driver Code Starts.
-//            Driver program to test methods
+
 int main() {
     int t;
-    // testcases
     cin >> t;
     cin.ignore();
     while (t--) {
-        vector<int> jobIDs, deadlines, profits;
+        vector<int> deadlines, profits;
         string temp;
         getline(cin, temp);
-        istringstream ss1(temp);
         int x;
+        istringstream ss1(temp);
         while (ss1 >> x)
-            jobIDs.push_back(x);
+            deadlines.push_back(x);
 
         getline(cin, temp);
         istringstream ss2(temp);
         while (ss2 >> x)
-            deadlines.push_back(x);
-
-        getline(cin, temp);
-        istringstream ss3(temp);
-        while (ss3 >> x)
             profits.push_back(x);
 
-        int n = jobIDs.size();
-
         Solution obj;
-        vector<int> ans = obj.JobSequencing(jobIDs, deadlines, profits);
+        vector<int> ans = obj.jobSequencing(deadlines, profits);
         cout << ans[0] << " " << ans[1] << endl;
-
-        cout << "~"
-             << "\n";
+        cout << "~" << endl;
     }
     return 0;
 }
