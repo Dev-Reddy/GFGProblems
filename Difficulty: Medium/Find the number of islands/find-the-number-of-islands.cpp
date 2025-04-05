@@ -2,59 +2,45 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // } Driver Code Ends
 
 class Solution {
   public:
-    // Function to find the number of islands.
-    int numIslands(vector<vector<char>>& grid) {
+    int countIslands(vector<vector<char>>& grid) {
         // Code here
-        
-        int m = grid.size();
-        int n = grid[0].size();
-        
+        int dx[8] = {0, 0, 1, -1, 1, 1, -1, -1};
+        int dy[8] = {1, -1, 0, 0, -1, 1, -1, 1};
+        int n = grid.size();
+        int m = grid[0].size();
         int ans = 0;
-        
-        // up left, up, up right, left, right, down left, down, down right
-        
-        int row [] = {-1, -1, -1, 0, 0, 1, 1, 1};
-        int col [] = {-1, 0, 1, -1, 1, -1, 0, 1};
-
-        
-        
-        vector<vector<int>> visited (m, vector<int>(n, 0));
-        
-        for(int i = 0; i < m; i++){
-            for(int j = 0; j < n; j++){
-                if(grid[i][j]=='1' && visited[i][j]==0){
-                    queue<pair<int, int>> q;
+        for(int i= 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                
+                if(grid[i][j] == 'L'){
+                    queue<pair<int,int>>q; 
                     q.push({i, j});
-                    visited[i][j] = 1;
-                    ans++;
+                
+                    grid[i][j] = 'W';
+                    ans += 1;
+                
                     while(!q.empty()){
-                        auto front = q.front();
+                        auto f = q.front();
                         q.pop();
-                        
-                        int r = front.first;
-                        
-                        int c = front.second;
-                        
+                    
                         for(int k = 0; k < 8; k++){
-                            int x = r + row[k];
-                            int y = c + col[k];
-                            
-                            if(x<m && y<n && x>=0 && y>=0){
-                                if(grid[x][y]=='1' && visited[x][y]==0){
-                                    q.push({x,y});
-                                    visited[x][y]=1;
-                                }
+                            int nx = f.first + dx[k];
+                            int ny = f.second + dy[k];
+                        
+                            if(nx >= 0 && nx < n && ny >= 0 && ny < m && grid[nx][ny] == 'L'){
+                                q.push({nx, ny});
+                                grid[nx][ny] = 'W';
                             }
                         }
                     }
                 }
             }
         }
-        
         return ans;
     }
 };
@@ -74,11 +60,12 @@ int main() {
             }
         }
         Solution obj;
-        int ans = obj.numIslands(grid);
+        int ans = obj.countIslands(grid);
         cout << ans << '\n';
-    
-cout << "~" << "\n";
-}
+
+        cout << "~"
+             << "\n";
+    }
     return 0;
 }
 // } Driver Code Ends
