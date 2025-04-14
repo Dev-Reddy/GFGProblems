@@ -1,106 +1,174 @@
 //{ Driver Code Starts
-// Initial Template for C++
-
 #include <bits/stdc++.h>
 using namespace std;
 
+
 // } Driver Code Ends
-// User function Template for C++
 
 class Solution {
-    public:
-    
-    void solve(int src, vector<int>& visited, vector<int>& topo, vector<int> adj[]){
-	    visited[src] = 1;
-	    for(auto i : adj[src]){
-	        if(!visited[i]){
-	            solve(i,visited,topo,adj);
-	        }
-	    }
-	    topo.push_back(src);
-	}
-    
-    string findOrder(string dict[], int N, int K) {
-        //code here
-        vector<int>adj[K];
-        for(int i=1; i<N; i++){
-            string s1 = dict[i-1];
-            string s2 = dict[i];
-            for(int j=0; j<min(s1.size(),s2.size()); j++){
-                if(s1[j] != s2[j]){
-                   int u = s1[j] - 'a';
-                   int v = s2[j] - 'a';
-                   adj[u].push_back(v);
-                   break;
-                }
-            }
+  public:
+    bool iscycle(int node, vector<bool>& vis, vector<bool>& dfsvis, vector<vector<int>>& adj) {
+    vis[node] = true;
+    dfsvis[node] = true;
+
+    for (auto it : adj[node]) {
+        if (!vis[it]) {
+            if (iscycle(it, vis, dfsvis, adj)) return true;
+        } else if (dfsvis[it]) {
+            return true;
         }
-        
-        vector<int>visited(K,0);
-	    vector<int>topo;
-	    for(int i=0; i<K; i++){
-	        if(!visited[i]){
-	            solve(i,visited,topo,adj);
-	        }
-	    }
-	    reverse(topo.begin(),topo.end());
-	    string s = "";
-	    for(int i=0; i<topo.size(); i++){
-	        s+=topo[i] + 'a';
-	    }
-	    return s;
-    }
-};
-
-//{ Driver Code Starts.
-string order;
-
-bool f(string a, string b) {
-    int p1 = 0;
-    int p2 = 0;
-    for (int i = 0; i < min(a.size(), b.size()) and p1 == p2; i++) {
-        p1 = order.find(a[i]);
-        p2 = order.find(b[i]);
-        //	cout<<p1<<" "<<p2<<endl;
     }
 
-    if (p1 == p2 and a.size() != b.size())
-        return a.size() < b.size();
-
-    return p1 < p2;
+    dfsvis[node] = false;
+    return false;
 }
 
-// Driver program to test above functions
+// DFS function for topological sorting
+void DFS(int node, stack<int>& st, vector<bool>& vis, vector<vector<int>>& adj) {
+    vis[node] = true;
+    for (auto it : adj[node]) {
+        if (!vis[it]) {
+            DFS(it, st, vis, adj);
+        }
+    }
+    st.push(node);
+}
+
+// Main function to find the alien dictionary order
+string findOrder(vector<string>& words) {
+    unordered_map<char, int> char_to_index;
+    unordered_map<int, char> index_to_char;
+    int index = 0;
+
+    // Step 1: Assign unique indices to all characters
+    for (auto& word : words) {
+        for (char ch : word) {
+            if (char_to_index.find(ch) == char_to_index.end()) {
+                char_to_index[ch] = index;
+                index_to_char[index] = ch;
+                index++;
+            }
+        }
+    }
+
+    int k = index;  // Total unique characters
+    vector<vector<int>> adj(k);
+
+    // Step 2: Build graph with prefix check
+    for (int i = 0; i < words.size() - 1; i++) {
+        string& s1 = words[i];
+        string& s2 = words[i + 1];
+        int len = min(s1.size(), s2.size());
+
+        bool found = false;
+        for (int j = 0; j < len; j++) {
+            if (s1[j] != s2[j]) {
+                int u = char_to_index[s1[j]];
+                int v = char_to_index[s2[j]];
+                adj[u].push_back(v);
+                found = true;
+                break;
+            }
+        }
+
+        // ❗ Invalid order if s1 is longer and s2 is prefix of s1
+        if (!found && s1.size() > s2.size()) {
+            return "";  // Invalid lexicographical order
+        }
+    }
+
+    // Step 3: Cycle detection
+    vector<bool> vis(k, false), dfsvis(k, false);
+    for (int i = 0; i < k; i++) {
+        if (!vis[i]) {
+            if (iscycle(i, vis, dfsvis, adj)) return "";
+        }
+    }
+
+    // Step 4: Topological sort
+    stack<int> st;
+    vector<bool> vis2(k, false);
+    for (int i = 0; i < k; i++) {
+        if (!vis2[i]) {
+            DFS(i, st, vis2, adj);
+        }
+    }
+
+    // Step 5: Create result from topological order
+    string res = "";
+    while (!st.empty()) {
+        res += index_to_char[st.top()];
+        st.pop();
+    }
+
+    return res;
+}
+
+
+};
+
+
+//{ Driver Code Starts.
+
+bool validate(const vector<string> &original, const string &order) {
+    unordered_map<char, int> mp;
+    for (const string &word : original) {
+        for (const char &ch : word) {
+            mp[ch] = 1;
+        }
+    }
+    for (const char &ch : order) {
+        if (mp.find(ch) == mp.end())
+            return false;
+        mp.erase(ch);
+    }
+    if (!mp.empty())
+        return false;
+
+    for (int i = 0; i < order.size(); i++) {
+        mp[order[i]] = i;
+    }
+
+    for (int i = 0; i < original.size() - 1; i++) {
+        const string &a = original[i];
+        const string &b = original[i + 1];
+        int k = 0, n = a.size(), m = b.size();
+        while (k < n and k < m and a[k] == b[k]) {
+            k++;
+        }
+        if (k < n and k < m and mp[a[k]] > mp[b[k]]) {
+            return false;
+        }
+        if (k != n and k == m) {
+            return false;
+        }
+    }
+    return true;
+}
+
 int main() {
-    int t;
-    cin >> t;
+    string str;
+    getline(cin, str);
+    int t = stoi(str);
     while (t--) {
-        int N, K;
-        cin >> N >> K;
-        string dict[N];
-        for (int i = 0; i < N; i++)
-            cin >> dict[i];
+        getline(cin, str);
+        stringstream ss(str);
+        string curr;
+        vector<string> words;
+        while (ss >> curr)
+            words.push_back(curr);
 
-        Solution obj;
-        string ans = obj.findOrder(dict, N, K);
-        order = "";
-        for (int i = 0; i < ans.size(); i++)
-            order += ans[i];
+        vector<string> original = words;
 
-        string temp[N];
-        std::copy(dict, dict + N, temp);
-        sort(temp, temp + N, f);
+        Solution ob;
+        string order = ob.findOrder(words);
 
-        bool f = true;
-        for (int i = 0; i < N; i++)
-            if (dict[i] != temp[i])
-                f = false;
-
-        if (f)
-            cout << 1;
-        else
-            cout << 0;
-        cout << endl;
+        if (order.empty()) {
+            cout << "\"\"" << endl;
+        } else {
+            cout << (validate(original, order) ? "true" : "false") << endl;
+        }
+        cout << "~" << endl;
     }
     return 0;
 }
