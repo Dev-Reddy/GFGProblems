@@ -1,54 +1,47 @@
-//{ Driver Code Starts
-#include <bits/stdc++.h>
-using namespace std;
-
-
-// } Driver Code Ends
-// User function template for C++
-
 class Solution {
   public:
+    string sm(string &a,string &b){
+      string temp="";
+      int n=a.size();
+      int m=b.size();
+      int cary=0;
+      int i=n-1,j=m-1;
+      while(i>=0 and j>=0){
+          int sm=a[i]-'0'+b[j]-'0'+cary;
+          temp+=sm%10+'0';
+          cary=sm/10;
+          i--,j--;
+      }
+      while(i>=0){
+          int sm=a[i]-'0'+cary;
+          temp+=sm%10+'0';
+          cary=sm/10;
+          i--;
+      }
+      while(j>=0){
+          int sm=b[j]-'0'+cary;
+          temp+=sm%10+'0';
+          cary=sm/10;
+          j--;
+      }
+      if(cary){
+          temp+=cary+'0';
+      }
+      while(temp.back()=='0') temp.pop_back();
+      reverse(begin(temp),end(temp));
+      return temp;
+  }
     string minSum(vector<int> &arr) {
         // code here
-        int n = arr.size();
-        string ans;
-        int carry = 0;
-        sort(arr.begin(), arr.end());
-        for (int i = n - 1; i >= 0; i--) {
-            int cur = arr[i] + carry;
-            if (i)i--, cur += arr[i];
-            carry = cur / 10, cur %= 10;
-            ans.push_back(char(cur + '0'));
+        sort(begin(arr),end(arr));
+        string a="",b="";
+        int n=arr.size();
+        for(int i=0;i<n;i+=2){
+            a+=arr[i]+'0';
         }
-        if (carry)ans.push_back(char(carry + '0'));
-        while (ans.back() == '0')ans.pop_back();
-        reverse(ans.begin(), ans.end());
-        return ans;
+        for(int i=1;i<n;i+=2){
+            b+=arr[i]+'0';
+        }
+        return sm(a,b);
     }
 };
-
-//{ Driver Code Starts.
-
-int main() {
-    int t;
-    cin >> t;
-    cin.ignore();
-    while (t--) {
-        vector<int> a;
-        string input;
-        getline(cin, input);
-        stringstream ss(input);
-        int number;
-        while (ss >> number) {
-            a.push_back(number);
-        }
-
-        Solution ob;
-        string ans = ob.minSum(a);
-        cout << ans << endl;
-        cout << "~" << endl;
-    }
-    return 0;
-}
-
-// } Driver Code Ends
