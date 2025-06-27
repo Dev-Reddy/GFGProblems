@@ -1,59 +1,36 @@
-//{ Driver Code Starts
-#include <bits/stdc++.h>
-using namespace std;
-
-
-// } Driver Code Ends
-
-using ll = long long;
 class Solution {
-
   public:
-    long long getCount(int n) {
-        vector <vector <ll>> dp (4, vector <ll> (3, 1));
-        dp[3][0] = dp[3][2] = 0;
-        for (ll p = 2; p <= n; p += 1) {
-            vector <vector <ll>> ndp = dp;
-            for (ll x = 0; x < 4; x += 1) {
-                for (ll y = 0; y < 3; y += 1) if (dp[x][y] != 0) {
-                    for (ll dx = -1; dx <= 1; dx += 1) {
-                        for (ll dy = -1; dy <= 1; dy += 1) if (abs (dx) + abs (dy) == 1) {
-                            ll nx = x + dx, ny = y + dy;
-                            if (nx >= 0 && nx < 4 && ny >= 0 && ny < 3) {
-                                ndp[x][y] += dp[nx][ny];
-                            }
-                        }
-                    }
-                }
-            }
-            dp = ndp;
-        }
-       
-        ll ans = 0;
-       
-        for (ll x = 0; x < 4; x += 1) {
-            for (ll y = 0; y < 3; y += 1) {
-                ans += dp[x][y];
-            }
-        }
-        return ans;
+      int Solve(int x,int y,vector<vector<char>>&num,int n,vector<vector<vector<int>>>&dp){
+      if(n==1)
+      return 1;
+      if(dp[x][y][n]!=-1)
+      return dp[x][y][n];
+      int ans=0;
+      ans+=Solve(x,y,num,n-1,dp);
+      int xaxis[]={1,0,-1,0};
+      int yaxis[]={0,1,0,-1};
+      for(int k=0;k<4;k++){
+          int ro=x+xaxis[k];
+          int co=y+yaxis[k];
+          if(ro>=0 && ro<4 && co>=0 && co<3 && num[ro][co]!='*')
+          ans+=Solve(ro,co,num,n-1,dp);
+      }
+      return dp[x][y][n]=ans;
+  }
+    int getCount(int n) {
+        vector<vector<vector<int>>>dp(4,vector<vector<int>>(3,vector<int>(n+1,-1)));
+        vector<vector<char>>num={{'1','2','3'},
+                                 {'4','5','6'},
+                                 {'7','8','9'},
+                                 {'*','0','*'}};
+          
+          int ans=0;
+          for(int i=0;i<num.size();i++){
+              for(int j=0;j<num[i].size();j++){
+                  if(num[i][j]!='*')
+                  ans+=Solve(i,j,num,n,dp);
+              }
+          }
+          return ans;
     }
 };
-
-
-//{ Driver Code Starts.
-int main() {
-
-    int t;
-    cin >> t;
-    while (t--) {
-        int n;
-        cin >> n;
-
-        Solution ob;
-        cout << ob.getCount(n) << "\n";
-    }
-    return 0;
-}
-
-// } Driver Code Ends
