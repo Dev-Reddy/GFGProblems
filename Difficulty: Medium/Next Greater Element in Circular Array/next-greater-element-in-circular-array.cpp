@@ -1,48 +1,26 @@
 class Solution {
   public:
-    vector<int> nextLargerElement(vector<int> &arr) {
+    vector<int> nextGreater(vector<int> &arr) {
         // code here
-          unordered_map<int,int>map;
-        for(int i=0;i<arr.size();i++)
-        {
-            map[i]=-1;
+        int n=arr.size();
+        stack<int> st;
+
+        vector<int> v(n,-1);
+        int i=2*n-1;
+        
+        while(i>=0){
+            int idx= i>=n?i-n:i;
+            
+            while(st.size() and st.top()<=arr[idx]) st.pop();
+            
+            if(!st.empty() && i<n) v[i]=st.top();
+            
+            st.push(arr[idx]);
+
+            i--;
         }
-        stack<pair<int,int>>st;
-        for(int i=0;i<arr.size();i++)
-        {
-             int t=arr[i];
-             while(!st.empty())
-             {
-                 pair<int,int>top=st.top();
-                 if(top.first<t)
-                 {
-                     map[top.second]=t;
-                     st.pop();
-                 }
-                 else
-                 break;
-             }
-             st.push({t,i});
-        }
-        for(int i=0;i<arr.size();i++)
-        {
-             int t=arr[i];
-             while(!st.empty())
-             {
-                 pair<int,int>top=st.top();
-                 if(top.first<t)
-                 {
-                     map[top.second]=t;
-                     st.pop();
-                 }
-                 else
-                 break;
-             }
-             st.push({t,i});
-        }
-        vector<int>ans;
-        for(int i=0;i<arr.size();i++)
-        ans.push_back(map[i]);
-        return ans;
+        
+        return v;
+        
     }
 };
