@@ -1,49 +1,40 @@
-//{ Driver Code Starts
-#include <bits/stdc++.h>
-using namespace std;
-
-
-// } Driver Code Ends
 // User function template for C++
 class Solution {
   public:
-    int rowWithMax1s(vector<vector<int> > &mat) {
-        
-        int n = mat.size();
-        int m = mat[0].size();
+    int rowWithMax1s(vector<vector<int>> &arr) {
         // code here
-        int i=0,j=m-1,ans=-1;
-	    while(i<n and j>=0){
-	        if(mat[i][j]==1){
-			   ans=i;
-	            j--;
-	        }
-	        if(mat[i][j]==0){
-	        i++;
-	        }
-	   }
-	    return ans;
+        int n =arr.size();
+             int m=arr[0].size();
+                int maxi = 0;
+                int res =-1;
+             for(int i=0;i<n;i++){
+                   
+                    int l = 0;
+                    int r = m-1;
+                   int ans =  -1;
+                   while (l<=r){
+                        int mid = (l+r)/2;
+                        
+                        if (arr[i][mid]==1){
+                             ans = mid;
+                            r = mid-1;
+                        }
+                        else if (arr[i][mid]<1){
+                               l =mid+1;
+                        }
+                        else{
+                             r= mid-1;
+                        }
+                        
+                   }
+                //   cout<<m-ans<<" "<<maxi <<endl;
+                // cout<<ans;
+                   if (ans!=-1 && m-ans<=m && m-ans >maxi){
+                        res =i;
+                        maxi = m-ans;
+                   }
+             }
+             return res ;
+             
     }
 };
-
-//{ Driver Code Starts.
-int main() {
-    int t;
-    cin >> t;
-    while (t--) {
-        int n, m;
-        cin >> n >> m;
-        vector<vector<int> > arr(n, vector<int>(m));
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                cin >> arr[i][j];
-            }
-        }
-        Solution ob;
-        auto ans = ob.rowWithMax1s(arr);
-        cout << ans << "\n";
-    }
-    return 0;
-}
-
-// } Driver Code Ends
