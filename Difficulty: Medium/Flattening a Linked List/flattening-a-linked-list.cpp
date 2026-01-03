@@ -1,11 +1,9 @@
-//{ Driver Code Starts
-#include <bits/stdc++.h>
-using namespace std;
-
-struct Node {
+/*
+class Node {
+public:
     int data;
-    struct Node* next;
-    struct Node* bottom;
+    Node* next;
+    Node* bottom;
 
     Node(int x) {
         data = x;
@@ -13,130 +11,48 @@ struct Node {
         bottom = NULL;
     }
 };
-
-void printList(Node* head) {
-    while (head != NULL) {
-        printf("%d ", head->data);
-        head = head->bottom;
-    }
-    printf("\n");
-}
-
-Node* createLinkedList(vector<Node*>& v) {
-    Node* head = new Node(0);
-    Node* temp = head;
-    int n = v.size();
-    for (int i = 0; i < n; i++) {
-        temp->next = v[i];
-        temp = temp->next;
-    }
-    return head->next;
-}
-
-
-// } Driver Code Ends
-/* Node structure  used in the program
-
-struct Node{
-    int data;
-    struct Node * next;
-    struct Node * bottom;
-
-    Node(int x){
-        data = x;
-        next = NULL;
-        bottom = NULL;
-    }
-
-};
 */
+
 
 class Solution {
   public:
-    // Function which returns the  root of the flattened linked list.
-    
-    Node * merge(Node * a, Node * b){
-        if(!a && !b) return a;
+    Node* Merge2SortedList(Node* head1, Node* head2)
+    {
+        Node* hook = new Node(-1);
         
-        Node * dummyNode = new Node(-1);
+        Node* itr1 = head1;
+        Node* itr2 = head2;
+        Node* itr3 = hook;
         
-        Node * curr = dummyNode;
-        
-        while(a && b){
-            if(a->data<=b->data){
-                curr->bottom = a;
-                a = a->bottom;
-                curr = curr->bottom;
-            } else {
-                curr->bottom = b;
-                b = b->bottom;
-                curr = curr->bottom;
+        while(itr1 and itr2){
+            if(itr1->data < itr2->data){
+                itr3->bottom = itr1;
+                itr1 = itr1->bottom;
             }
+            else{
+                itr3->bottom = itr2;
+                itr2 = itr2->bottom;
+            }
+            itr3 = itr3->bottom;
         }
-        
-        if(a){
-            curr->bottom = a;
+        while(itr1){
+            itr3->bottom = itr1;
+            itr1 = itr1->bottom;
+            itr3 = itr3->bottom;
         }
-        
-        if(b){
-            curr->bottom = b;
+        while(itr2){
+            itr3->bottom = itr2;
+            itr2 = itr2->bottom;
+            itr3 = itr3->bottom;
         }
-        
-        return dummyNode->bottom;
+        return hook->bottom;
     }
-    
-    
     Node *flatten(Node *root) {
-        // Your code here
-        
-        if(!root || !root->next) return root;
-        
-        Node * nextPart = flatten(root->next);
-        
-        Node * ans = merge(root, nextPart);
-        
-        return ans;
+        Node* itr = root->next;
+        while(itr){
+            root = Merge2SortedList(root, itr);
+            itr = itr->next;
+        }
+        return root;
     }
 };
-
-
-//{ Driver Code Starts.
-
-int main() {
-    int t;
-    cin >> t;
-    cin.ignore();
-    while (t--) {
-        int n;
-        cin >> n;
-        cin.ignore();
-
-        vector<Node*> v(n);
-
-        for (int i = 0; i < n; i++) {
-            string line;
-            getline(cin, line);
-            stringstream ss(line);
-
-            Node* head = new Node(0);
-            Node* temp = head;
-            int x;
-            while (ss >> x) {
-                Node* newNode = new Node(x);
-                temp->bottom = newNode;
-                temp = temp->bottom;
-            }
-            v[i] = head->bottom;
-        }
-
-        Solution ob;
-        Node* list = createLinkedList(v);
-        Node* head = ob.flatten(list);
-        printList(head);
-        cout << "~" << endl;
-    }
-
-    return 0;
-}
-
-// } Driver Code Ends
