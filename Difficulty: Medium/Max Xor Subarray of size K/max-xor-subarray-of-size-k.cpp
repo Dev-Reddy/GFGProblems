@@ -2,15 +2,27 @@ class Solution {
   public:
     int maxSubarrayXOR(vector<int>& arr, int k) {
         // code here
-        int n = arr.size(),x=0,maxi;
-        for(int i=0;i<k;++i){
-            x^=arr[i];
-        }
-        maxi=x;
-        for(int i=k;i<n;++i){
-            x^=arr[i]^arr[i-k];
-            if(x>maxi) maxi=x;
-        }
-        return maxi;
+        int n = arr.size();
+           
+           int maxxor = 0;
+           int cx =0;
+           
+           for(int i=0;i<n;i++){
+                  cx^=arr[i];   
+                 
+                  if(i==k-1) {
+                      maxxor = max(maxxor,cx);
+                       cx^=arr[i-k]; 
+                  }
+                  if(i>=k){
+                          cx^=arr[i-k]; 
+                          maxxor = max(maxxor,cx);
+                  }
+                  
+                //   cout<<cx<<endl;
+                 
+           }
+           
+           return maxxor;
     }
 };
