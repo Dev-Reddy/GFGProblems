@@ -1,51 +1,71 @@
 class Solution {
   public:
-    string smallestWindow(string &s, string &p) {
+    string minWindow(string &s, string &p) {
         // code here
-        vector<int> countp(26,0);
-        vector<int> counts(26,0);
+        int n1=s.size();
+        int n2=p.size();
+        if(n2>n1)return "";
         
-        if (p.size()>s.size())
-        return "";
-        int distinctp=0,len=s.size(),match=0;
+        vector<bool>v(26,0); // use to check char is in p or not
+        vector<int>count1(26,0);// help us to determine all char present in substring or not
+        vector<int>count2(26,0);// number of each char in p
         
-        for (int i=0;i<p.size();i++){
-            if (countp[p[i]-'a']==0)
-            distinctp++;
-            
-            countp[p[i]-'a']++;
+        for(int i=0;i<p.size();i++){
+           v[p[i]-'a']=1;
+           count1[p[i]-'a']++;
+           count2[p[i]-'a']++;
         }
         
-        int left=0,right=0,start=0,end=s.size()-1;
-        while (right<s.size()){
-            counts[s[right]-'a']++;
+        int a=0,b=0;
+        int start=0;
+        int end=-1;
+        int ans=INT_MAX;
+        int k = 0; // how many char till present in substring
+        
+        
+        while(end<n1){
             
-            if (counts[s[right]-'a']==countp[s[right]-'a'])
-            match++;
-            
-            if (match==distinctp){
-                while (counts[s[left]-'a']>countp[s[left]-'a']){
-                    counts[s[left]-'a']--;
-                    left++;
+            if(k==n2){ // all char present update ans.
+                
+                int size = end-start+1;
+                if(size<ans){
+                    a=start;
+                    b=end;
+                    ans=size;
                 }
-                if (len>right-left+1){
-                    start=left;
-                    end=right;
-                    len=right-left+1;
+                
+                if(v[s[start]-'a']){ // remove first char of substring
+                    
+                    count1[s[start]-'a']++;
+                    int temp = count2[s[start]-'a']-count1[s[start]-'a'];// count of start index char present in substring
+                    if(temp<count2[s[start]-'a'])k--;
+                       
                 }
+                
+                start++;
+                
             }
-            
-            right++;
-        }
-        string ans="";
-        if (match<distinctp)
-            return "";
-        else
-        {
-            for (int i=start;i<=end;i++){
-                ans+=s[i];
+            else{ // increase the lenght and check
+                
+                end++;
+                if(end>=n1)break;
+                
+                if(v[s[end]-'a']){
+                    
+                    if(count1[s[end]-'a']>0){ // help for duplication
+                        count1[s[end]-'a']--;
+                        k++;
+                    }
+                    else count1[s[end]-'a']--;
+                }
+                
             }
-            return ans;
         }
+        
+        if(ans==INT_MAX)return "";
+        
+        return s.substr(a,b-a+1);
+        
+        
     }
 };
