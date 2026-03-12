@@ -2,20 +2,37 @@ class Solution {
   public:
     int kBitFlips(vector<int>& arr, int k) {
         // code here
-         int n=arr.size();
-        vector<int> flip(n+1,0);
-        int operation=0;
-        for(int i=0;i<n;i++){
-            if(i>0)flip[i]+=flip[i-1];
-            if(flip[i]%2==1 && arr[i]==0)continue;
-            if(flip[i]%2==0 && arr[i]==1)continue;
-            if(i>n-k)return -1;
-            else{
-                operation++;
-                flip[i]+=1;
-                if(i<n-1)flip[i+k]=-1;
+        vector<int>vec(arr.size()+1, 0);
+        int cnt=0;
+        for(int i=0;i<=arr.size()-k;i++){
+             if(i!=0){
+                vec[i]+=vec[i-1];
+            }
+            if(arr[i]==1){
+                if(vec[i]&1){
+                    cnt++;
+                vec[i]++;
+                vec[i+k]--;
+                }
+            }else if(vec[i]%2==0){
+                cnt++;
+                vec[i]++;
+                vec[i+k]--;
             }
         }
-        return operation;
+        for(int i=arr.size()-k+1;i<arr.size();i++){
+             if(i!=0){
+                vec[i]+=vec[i-1];
+            }
+             if(arr[i]==1){
+                if(vec[i]&1){
+                    return -1;
+                }
+            }else if(vec[i]%2==0){
+               return -1;
+            }
+            
+        }
+        return cnt;
     }
 };
